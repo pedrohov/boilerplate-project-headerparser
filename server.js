@@ -1,6 +1,3 @@
-// server.js
-// where your node app starts
-
 // init project
 var express = require('express');
 var app = express();
@@ -18,15 +15,20 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/views/index.html');
 });
 
-
-// your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+// Endpoint for Whoami:
+app.get("/api/whoami", function (req, res) {
+  /// Get the remote address:
+  let ip = req.get('x-forwarded-for') || req.connection.remoteAddress;
+  
+  // Use only the first IP addres if provided more:
+  ip = ip.slice(0, 14);
+  
+  res.json({
+    "ipaddress": ip,
+    "language": req.get("Accept-Language"),
+    "software": req.get("User-Agent")
+  });
 });
 
-
-
-// listen for requests :)
-var listener = app.listen(process.env.PORT, function () {
-  console.log('Your app is listening on port ' + listener.address().port);
-});
+// listen for requests:
+var listener = app.listen(process.env.PORT);
